@@ -60,10 +60,48 @@ module.exports = function (app) {
 		overrideSocketIoMethods: function () {
 			var _emit = app.sockets.emit,
 							_broadcast = app.sockets.broadcast;
-			app.sockets.emit = function () {
-				console.log("emit", arguments);
+
+
+			/**
+			 * Emit a message to one or more sockets by ID
+			 *
+			 * If the event name is omitted, "message" will be used by default.
+			 * Thus, sails.sockets.emit(socketIDs, data) is also a valid usage.
+			 *
+			 * @param  {Array<String>|String} socketIDs The ID or IDs of sockets to send a message to
+			 * @param  {String} [eventName]		The name of the message to send
+			 * @param  {Object} [data]				Optional data to send with the message
+			 * @param  {String} [protoModel]	Optional the potocolBuffers model to serialize request
+			 */
+			app.sockets.emit = function (socketIds, eventName, data, protoModel) {
+
+				// `protoModel` is optional
+				if (typeof data === 'string') {
+					protoModel = data;
+					data = {};
+				}
+
+				// `event` is optional
+				if (typeof eventName === 'object') {
+					data = eventName;
+					eventName = null;
+				}
+
+				if (!protoModel)
+					return _emit.apply(this, arguments);
+
+				fields = builder.lookup(packagePath + protoModel).getChildren(ProtoBuf.Reflect.Message.Field).map(
+								function (f) {
+									return   f.name;
+								}),
+								fieldsToEncode = _.pick(data.data || data, fields);
+				data = {
+					psn: "Message",
+					protobuf: protoModels[protoModel].encode(fieldsToEncode).toBuffer()
+				};
+
 				//TODO: implement encoding logic
-				_emit.apply(this, arguments);
+				_emit.call(this, socketIds, eventName, data, protoModel);
 			};
 
 			app.sockets.broadcast = function () {
