@@ -1,6 +1,6 @@
 # sails-hook-socket-protobuf
 
-A [Sails.js](http://sailsjs.org) hook to support [Protocol Buffers](https://developers.google.com/protocol-buffers/) serializing for [Socket.io](http://socket.io/) message exckange.
+A [Sails.js](http://sailsjs.org) hook to support [Protocol Buffers](https://developers.google.com/protocol-buffers/) serializing for [Socket.io](http://socket.io/) message exchange.
 
 ## Dependencies
 
