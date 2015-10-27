@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sails Socket Demo - Maangalabs</title>
+    <!-- BootSwatch Paper Theme for Bootstrap -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <!--STYLES-->
+    <link rel="stylesheet" href="/styles/importer.css">
+    <link rel="stylesheet" href="/styles/main.css">
+    <!--STYLES END-->
+  </head>
+  <body ng-app="socketApp" ng-controller="ChatController">
+
+    <div class="navbar navbar-inverse navbar-fixed-bottom">
+      <div class="col-lg-12">
+        <form class="form_chat">
+          <div class="col-lg-4 col-md-3">
+            <!-- Username -->
+            <input type="text" ng-model="chatUser" class="form-control" placeholder="TypeYourNameHere">
+          </div>
+
+          <div class="col-lg-6 col-md-5">
+            <!-- Chat Message -->
+            <input type="text" ng-model="chatMessage" class="form-control" placeholder="TypeYourMessageHere">
+          </div>
+          <button class="btn btn-default col-lg-2 col-md-2" ng-click="sendMsg()">Send</button>
+        </form>
+      </div>
+    </div>
+    <div class="col-md-12" style="padding:100px">
+      <table class="table">
+        <tr class="chat_message" ng-repeat="chat in chatList| orderBy:predicate:reverse | limitTo: 15">
+          <td class="col-md-12 td_class"><strong>{{chat.user}} : </strong>{{chat.message}}</td>
+        </tr>
+      </table>
+    </div>
+    <!-- Protobuf Js  -->
+    <script src="//cdn.rawgit.com/dcodeIO/ByteBuffer.js/4.1.0/dist/ByteBufferAB.js"></script>
+    <script src="//cdn.rawgit.com/dcodeIO/ProtoBuf.js/4.1.1/dist/ProtoBuf.js"></script>
+    <!-- Angular Js  -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script>
+    <!--SCRIPTS-->
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="/js/dependencies/sails.io.proto.js"></script>
+    <script src="/js/socketApp.js"></script>
+    <!--SCRIPTS END-->
+  </body>
+</html>
