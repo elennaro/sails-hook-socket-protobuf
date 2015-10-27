@@ -1,5 +1,5 @@
 {
-  "name": "sails-hool-socket-protobuf",
+  "name": "sails-hook-socket-protobuf",
   "version": "0.0.1",
   "description": "Implements protobuf.js over socket.io support in Sails",
   "keywords": [
