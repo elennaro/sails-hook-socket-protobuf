@@ -2,7 +2,7 @@
 
 A [Sails.js](http://sailsjs.org) hook to support [Protocol Buffers](https://developers.google.com/protocol-buffers/) serializing for [Socket.io](http://socket.io/) message exchange.
 
-Supposrts encoding for both:
+Supports serialization for both:
 
 * Sails.io [Resourceful PubSub](http://sailsjs.org/documentation/reference/web-sockets/resourceful-pub-sub)
 * Sails.io plain [emit](http://sailsjs.org/documentation/reference/web-sockets/sails-sockets/sails-sockets-emit) and [broadcast](http://sailsjs.org/documentation/reference/web-sockets/sails-sockets/sails-sockets-broadcast) methods
