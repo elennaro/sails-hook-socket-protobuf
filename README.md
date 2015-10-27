@@ -6,9 +6,9 @@ A [Sails.js](http://sailsjs.org) hook to support [Protocol Buffers](https://deve
 
 The hook is:
 
-* Written for **[Sails.js](http://sailsjs.org)**
-* Depends on **[sails-hook-sockets](https://github.com/balderdashy/sails-hook-sockets)**
-* For Protocol Buffers serializing uses **[protobuf.js](https://github.com/dcodeIO/protobuf.js)**
+* Written for [Sails.js](http://sailsjs.org)
+* Depends on [sails-hook-sockets](https://github.com/balderdashy/sails-hook-sockets)
+* For Protocol Buffers serializing uses [protobuf.js](https://github.com/dcodeIO/protobuf.js)
 
 ## todo
 
