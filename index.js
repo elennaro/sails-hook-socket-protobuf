@@ -87,7 +87,7 @@ module.exports = function (app) {
 					eventName = null;
 				}
 
-				if (!protoModel)
+				if (!protoModel || !protoModels[protoModel])
 					return _emit.apply(this, arguments);
 
 				fields = builder.lookup(packagePath + protoModel).getChildren(ProtoBuf.Reflect.Message.Field).map(
