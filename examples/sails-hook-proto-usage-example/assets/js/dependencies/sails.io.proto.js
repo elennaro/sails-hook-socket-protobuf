@@ -310,6 +310,7 @@
 						data = args[1].data || args[1],
 						proto = data.protobuf || null,
 						model = data.psn || null;
+
 		if (proto && model) {
 			deepExtend(data, protoModels[model].decode(proto));
 			delete data.protobuf;

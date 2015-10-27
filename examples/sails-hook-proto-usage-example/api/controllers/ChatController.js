@@ -17,7 +17,7 @@ module.exports = {
 			// So add new conversation
 			Chat.create(data_from_client).exec(function (err, data) {
 				Chat.publishCreate(data);
-				sails.sockets.emit(req.socket.id, 'privateMessage', data);
+				sails.sockets.emit(req.socket.id, 'privateMessage', data, "Message");
 				res.json({
 					message: 'Message sent!'
 				});

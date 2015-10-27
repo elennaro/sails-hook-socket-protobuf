@@ -1,6 +1,11 @@
 # sails-hook-socket-protobuf
 
-A [Sails.js](http://sailsjs.org) hook to support [Protocol Buffers](https://developers.google.com/protocol-buffers/) serializing for [Socket.io](http://socket.io/) message exckange.
+A [Sails.js](http://sailsjs.org) hook to support [Protocol Buffers](https://developers.google.com/protocol-buffers/) serializing for [Socket.io](http://socket.io/) message exchange.
+
+Supposrts encoding for both:
+
+* Sails.io [Resourceful PubSub](http://sailsjs.org/documentation/reference/web-sockets/resourceful-pub-sub)
+* Sails.io plain [emit](http://sailsjs.org/documentation/reference/web-sockets/sails-sockets/sails-sockets-emit) and [broadcast](http://sailsjs.org/documentation/reference/web-sockets/sails-sockets/sails-sockets-broadcast) methods
 
 ## Dependencies
 
@@ -16,7 +21,8 @@ See [sails-hook-proto-usage-example](./examples/sails-hook-proto-usage-example) 
 
 ## todo
 
-1. Add extended usage section
+1. Extend usage section
+1. Move some logic to /lib to DRY code
 2. Add tests
 3. Add editorconfig
 4. Write features/roadmap
