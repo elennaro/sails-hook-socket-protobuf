@@ -74,9 +74,10 @@ module.exports = function (app) {
 			 * @param  {String} [protoModel]	Optional the potocolBuffers model to serialize request
 			 */
 			app.sockets.emit = function (socketIds, eventName, data, protoModel) {
+				var fields, fieldsToEncode;
 
 				// `protoModel` is optional
-				if (typeof data === 'string') {
+				if (!protoModel && typeof data === 'string') {
 					protoModel = data;
 					data = {};
 				}
@@ -93,20 +94,81 @@ module.exports = function (app) {
 				fields = builder.lookup(packagePath + protoModel).getChildren(ProtoBuf.Reflect.Message.Field).map(
 								function (f) {
 									return   f.name;
-								}),
-								fieldsToEncode = _.pick(data.data || data, fields);
+								});
+				fieldsToEncode = _.pick(data.data || data, fields);
+
 				data = {
 					psn: "Message",
 					protobuf: protoModels[protoModel].encode(fieldsToEncode).toBuffer()
 				};
 
 				//TODO: implement encoding logic
-				_emit.call(this, socketIds, eventName, data, protoModel);
+				_emit.apply(this, arguments);
 			};
 
-			app.sockets.broadcast = function () {
-				console.log("broadcast", arguments);
-				//TODO: implement encoding logic
+
+			/**
+			 * Broadcast a message to a room
+			 *
+			 * If the event name is omitted, "message" will be used by default.
+			 * Thus, sails.sockets.broadcast(roomName, data) is also a valid usage.
+			 *
+			 * @param  {String} roomName									The room to broadcast a message to
+			 * @param  {String} [eventName]								The event name to broadcast
+			 * @param  {Object} [data]										The data to broadcast
+			 * @param  {Object}	[socketToOmit]						Optional socket to omit
+			 * @param  {String} [protoModel]	[Optional]	the potocolBuffers model to serialize request
+			 */
+			app.sockets.broadcast = function (roomName, eventName, data, socketToOmit, protoModel) {
+				var fields, encodedData;
+
+				// `protoModel` is optional
+				if (!protoModel && typeof socketToOmit === 'string') {
+					protoModel = socketToOmit;
+					socketToOmit = null;
+				}
+
+				// `protoModel` is optional
+				if (!protoModel && typeof data === 'string') {
+					protoModel = data;
+					data = {};
+				}
+
+				// `protoModel` is optional
+				if (!protoModel && typeof data === 'string') {
+					protoModel = data;
+					data = {};
+				}
+
+				// If the 'eventName' is an object, assume the argument was omitted and
+				// parse it as data instead.
+				if (typeof eventName === 'object') {
+					data = eventName;
+					eventName = null;
+				}
+
+				if (!protoModel || !protoModels[protoModel])
+					_broadcast.apply(this, arguments);
+
+				encodeNestedData = !!data.data;
+
+				fields = builder.lookup(packagePath + protoModel).getChildren(ProtoBuf.Reflect.Message.Field).map(
+								function (f) {
+									return   f.name;
+								});
+
+				encodedData = {
+					psn: "Message",
+					protobuf: protoModels[protoModel].encode(_.pick(data.data || data, fields)).toBuffer()
+				};
+
+				if (data.data) {
+					delete data.data;
+					data.data = encodedData;
+				} else {
+					data = encodedData;
+				}
+
 				_broadcast.apply(this, arguments);
 			};
 		},
@@ -129,23 +191,8 @@ module.exports = function (app) {
 				var protobufSchemeName = app.models[identity].protobufSchemeName;
 				if (!protobufSchemeName || !protoModels[protobufSchemeName])
 					continue;
-				var fields = builder.lookup(packagePath + protobufSchemeName).getChildren(ProtoBuf.Reflect.Message.Field).map(function (f) {
-					return f.name;
-				});
 				app.models[identity].broadcast = function (roomName, eventName, data, socketToOmit) {
-					var message = _.extend({}, data),
-									fieldsToEncode = _.pick(message.data || message, fields),
-									encoded = {
-										psn: protobufSchemeName,
-										protobuf: protoModels[protobufSchemeName].encode(fieldsToEncode).toBuffer()
-									};
-					if (message.data) {
-						delete message.data;
-						message.data = encoded;
-					} else {
-						message = encoded;
-					}
-					app.sockets.broadcast(roomName, eventName, message, socketToOmit, identity);
+					app.sockets.broadcast(roomName, eventName, data, socketToOmit, protobufSchemeName);
 				};
 			}
 		},

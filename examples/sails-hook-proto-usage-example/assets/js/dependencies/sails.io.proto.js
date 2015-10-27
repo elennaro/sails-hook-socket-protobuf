@@ -311,7 +311,6 @@
 						proto = data.protobuf || null,
 						model = data.psn || null;
 
-		console.log('onevent', packet, data);
 		if (proto && model) {
 			deepExtend(data, protoModels[model].decode(proto));
 			delete data.protobuf;
