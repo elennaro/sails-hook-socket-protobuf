@@ -1,0 +1,31 @@
+{
+  "name": "sails-hool-socket-protobuf",
+  "version": "0.0.1",
+  "description": "Implements protobuf.js over socket.io support in Sails",
+  "keywords": [
+    "socket.io",
+    "protobuf.js",
+    "sails.js",
+    "sails-hook",
+    "hook"
+  ],
+  "author": "Elennaro <alex.art@in2circle.com>",
+  "contributors": [],
+  "main": "index.js",
+  "sails": {
+    "isHook": true
+  },
+  "dependencies": {
+    "protobufjs": "^4.1.2"
+  },
+  "devDependencies": {
+    "sails": "~0.11.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/brentertz/scapegoat/blob/master/LICENSE-MIT"
+  }
+}
