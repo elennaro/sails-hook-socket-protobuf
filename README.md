@@ -10,9 +10,13 @@ The hook is:
 * Depends on [sails-hook-sockets](https://github.com/balderdashy/sails-hook-sockets)
 * For Protocol Buffers serializing uses [protobuf.js](https://github.com/dcodeIO/protobuf.js)
 
+## Usage
+
+See [sails-hook-proto-usage-example](./examples/sails-hook-proto-usage-example) for usage example
+
 ## todo
 
-1. Add description and usage examples
+1. Add extended usage section
 2. Add tests
 3. Add editorconfig
 4. Write features/roadmap

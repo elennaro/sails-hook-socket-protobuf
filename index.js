@@ -61,11 +61,13 @@ module.exports = function (app) {
 			var _emit = app.sockets.emit,
 							_broadcast = app.sockets.broadcast;
 			app.sockets.emit = function () {
+				console.log("emit", arguments);
 				//TODO: implement encoding logic
 				_emit.apply(this, arguments);
 			};
 
 			app.sockets.broadcast = function () {
+				console.log("broadcast", arguments);
 				//TODO: implement encoding logic
 				_broadcast.apply(this, arguments);
 			};

@@ -1,0 +1,6 @@
+message Dialog{
+    required string message = 1;
+    optional string user = 2;
+    optional int32 id = 3;
+    optional int32 type = 4;
+}
