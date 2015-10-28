@@ -288,6 +288,7 @@
 
 	_emit = _socket.emit;
 	_onevent = _socket.onevent;
+	
 	_socket.emit = function () {
 		if (arguments[1] && arguments[1].model && arguments[1].data) {
 			var
@@ -305,6 +306,7 @@
 		}
 		_emit.apply(_socket, arguments);
 	};
+	
 	_socket.onevent = function (packet) {
 		var args = packet.data || [],
 						data = args[1].data || args[1],

@@ -55,6 +55,22 @@ module.exports = function (app) {
 			var _emit = app.sockets.emit,
 							_broadcast = app.sockets.broadcast;
 
+			app.io.on('connect', function (socket) {
+				var _onevent = socket.onevent;
+
+				socket.onevent = function (packet) {
+					var args = packet.data || [],
+									data = args[1].data || args[1],
+									proto = data.protobuf || null,
+									model = data.psn || null;
+
+					if (proto && model) {
+						_.extend(data, protoModels[model].decode(proto));
+						delete data.protobuf;
+					}
+					_onevent.call(this, packet);
+				};
+			});
 
 			/**
 			 * Emit a message to one or more sockets by ID
@@ -144,8 +160,6 @@ module.exports = function (app) {
 				if (!protoModel || !protoModels[protoModel])
 					_broadcast.apply(this, arguments);
 
-				encodeNestedData = !!data.data;
-
 				fields = builder.lookup(packagePath + protoModel).getChildren(ProtoBuf.Reflect.Message.Field).map(
 								function (f) {
 									return   f.name;
@@ -189,21 +203,6 @@ module.exports = function (app) {
 					app.sockets.broadcast(roomName, eventName, data, socketToOmit, protobufSchemeName);
 				};
 			}
-		},
-		//Incoming messages decoding
-		routes: {
-			before: {
-				'/*': function (req, res, next) {
-					if (req.body && req.body.protobuf && req.body.psn && protoModels[req.body.psn]) {
-						_.extend(req.body, protoModels[req.body.psn].decode(req.body.protobuf));
-						delete req.body.protobuf;
-					}
-					return next();
-				}
-			},
-			after: {
-			}
 		}
 	};
 };
-;
