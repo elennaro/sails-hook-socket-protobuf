@@ -9,6 +9,8 @@ Supports serialization for both:
 
 ## Dependencies
 
+[![Dependency Status](https://david-dm.org/elennaro/sails-hook-socket-protobuf.svg)](https://david-dm.org/elennaro/sails-hook-socket-protobuf)
+
 The hook is:
 
 * Written for [Sails.js](http://sailsjs.org)
