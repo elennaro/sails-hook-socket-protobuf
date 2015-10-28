@@ -13,13 +13,7 @@ module.exports = function (app) {
 
 	return {
 		defaults: {
-			protobuf: {
-				frontendLibSrc: "manual", //Can be "cdn", "asserts", "failOver", "manual". Only "manual" is supported now
-				folder: "proto",
-				fileName: "Models.proto",
-				package: null,
-				isJson: false
-			}
+			protobuf: require('./lib/defaults'),
 		},
 		initialize: function (done) {
 
