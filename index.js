@@ -16,7 +16,7 @@ module.exports = function (app) {
 			protobuf: {
 				frontendLibSrc: "manual", //Can be "cdn", "asserts", "failOver", "manual". Only "manual" is supported now
 				folder: "proto",
-				fileName: "Models",
+				fileName: "Models.proto",
 				package: null,
 				isJson: false
 			}
@@ -181,9 +181,9 @@ module.exports = function (app) {
 		augmentModels: function () {
 			//Load Model's file
 			if (isJson)
-				ProtoBuf.loadJsonFile(path.join(app.config.appPath, folder, fileName + ".json"), builder);
+				ProtoBuf.loadJsonFile(path.join(app.config.appPath, folder, fileName), builder);
 			else
-				ProtoBuf.loadProtoFile(path.join(app.config.appPath, folder, fileName + ".proto"), builder);
+				ProtoBuf.loadProtoFile(path.join(app.config.appPath, folder, fileName), builder);
 			protoModels = builder.build();
 			//Load all protobuf models
 

@@ -273,9 +273,9 @@
 	(function loadProtoModels() {
 		var path = folder + "/" + fileName;
 		if (isJson)
-			ProtoBuf.loadJsonFile(path + ".json", builder);
+			ProtoBuf.loadJsonFile(path, builder);
 		else
-			ProtoBuf.loadProtoFile(path + ".proto", builder);
+			ProtoBuf.loadProtoFile(path, builder);
 		protoModels = builder.build();
 	})();
 

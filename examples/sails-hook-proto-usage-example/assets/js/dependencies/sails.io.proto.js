@@ -273,9 +273,9 @@
 	(function loadProtoModels() {
 		var path = folder + "/" + fileName;
 		if (isJson)
-			ProtoBuf.loadJsonFile(path + ".json", builder);
+			ProtoBuf.loadJsonFile(path, builder);
 		else
-			ProtoBuf.loadProtoFile(path + ".proto", builder);
+			ProtoBuf.loadProtoFile(path, builder);
 		protoModels = builder.build();
 	})();
 
@@ -319,4 +319,4 @@
 	};
 
 	//TODO: make explicit Init section
-})(JSON.parse('{"frontendLibSrc":"manual","folder":"proto","fileName":"Models","package":null,"isJson":false}'));
+})(JSON.parse('{"frontendLibSrc":"manual","folder":"proto","fileName":"Models.proto","package":null,"isJson":false}'));
