@@ -1,36 +1,29 @@
-/* global JSON, __dirname */
 
-var path = require('path'),
-				ProtoBuf = require("protobufjs"),
-				builder = ProtoBuf.newBuilder(),
-				protoModels = {};
-
+/**
+ * 
+ * Sails hook socket protobuf
+ * 
+ */
 module.exports = function (app) {
-	var _ = app.util._,
-					//Settings
-					fileName, package, packagePath, isJson;
+
+	var builder = require("protobufjs").newBuilder(),
+					protoModels = {};
 
 	return {
+		//Default settings
 		defaults: {
 			protobuf: require('./lib/defaults'),
 		},
+		//Initialize
 		initialize: function (done) {
-			var self = this;
-
 			app.log.verbose("Initialize sails-hook-socket-protobuf");
-
-			//Init settings
-			fileName = app.config.protobuf.fileName;
-			package = app.config.protobuf.package;
-			isJson = app.config.protobuf.isJson;
-			packagePath = package ? package + '.' : '';
 
 			if (!app.hooks.sockets) {
 				return done(new Error('Cannot use sails-hook-protobuf `sockets` hook without the `sockets` hook.'));
 			}
 
 			//load models
-			protoModels = require('./lib/loadProtoModels')(app, ProtoBuf, builder);
+			protoModels = require('./lib/loadProtoModels')(app, builder);
 
 			if (app.hooks.grunt) {
 				//Add extention script to frontend
@@ -41,7 +34,7 @@ module.exports = function (app) {
 			// before trying to attach our hook.
 			app.after('hook:sockets:loaded', function () {
 				//Ovverride socket IO methods to support protobuf encoding
-				self.overrideSocketIoMethods();
+				require('./lib/overrideSocketMethods')(app, builder, protoModels);
 			});
 
 			// Wait for orm to be loaded
@@ -52,134 +45,6 @@ module.exports = function (app) {
 				// Indicate that the hook is fully loaded
 				return done();
 			});
-		},
-		overrideSocketIoMethods: function () {
-			var _emit = app.sockets.emit,
-							_broadcast = app.sockets.broadcast;
-
-			app.io.on('connect', function (socket) {
-				var _onevent = socket.onevent;
-
-				socket.onevent = function (packet) {
-					var args = packet.data || [],
-									data = args[1].data || args[1],
-									proto = data.protobuf || null,
-									model = data.psn || null;
-
-					if (proto && model) {
-						_.extend(data, protoModels[model].decode(proto));
-						delete data.protobuf;
-					}
-					_onevent.call(this, packet);
-				};
-			});
-
-			/**
-			 * Emit a message to one or more sockets by ID
-			 *
-			 * If the event name is omitted, "message" will be used by default.
-			 * Thus, sails.sockets.emit(socketIDs, data) is also a valid usage.
-			 *
-			 * @param  {Array<String>|String} socketIDs The ID or IDs of sockets to send a message to
-			 * @param  {String} [eventName]		The name of the message to send
-			 * @param  {Object} [data]				Optional data to send with the message
-			 * @param  {String} [protoModel]	Optional the potocolBuffers model to serialize request
-			 */
-			app.sockets.emit = function (socketIds, eventName, data, protoModel) {
-				var fields, fieldsToEncode;
-
-				// `protoModel` is optional
-				if (!protoModel && typeof data === 'string') {
-					protoModel = data;
-					data = {};
-				}
-
-				// `event` is optional
-				if (typeof eventName === 'object') {
-					data = eventName;
-					eventName = null;
-				}
-
-				if (!protoModel || !protoModels[protoModel])
-					return _emit.apply(this, arguments);
-
-				fields = builder.lookup(packagePath + protoModel).getChildren(ProtoBuf.Reflect.Message.Field).map(
-								function (f) {
-									return   f.name;
-								});
-				fieldsToEncode = _.pick(data.data || data, fields);
-
-				data = {
-					psn: "Message",
-					protobuf: protoModels[protoModel].encode(fieldsToEncode).toBuffer()
-				};
-
-				//TODO: implement encoding logic
-				_emit.apply(this, arguments);
-			};
-
-			/**
-			 * Broadcast a message to a room
-			 *
-			 * If the event name is omitted, "message" will be used by default.
-			 * Thus, sails.sockets.broadcast(roomName, data) is also a valid usage.
-			 *
-			 * @param  {String} roomName									The room to broadcast a message to
-			 * @param  {String} [eventName]								The event name to broadcast
-			 * @param  {Object} [data]										The data to broadcast
-			 * @param  {Object}	[socketToOmit]						Optional socket to omit
-			 * @param  {String} [protoModel]	[Optional]	the potocolBuffers model to serialize request
-			 */
-			app.sockets.broadcast = function (roomName, eventName, data, socketToOmit, protoModel) {
-				var fields, encodedData;
-
-				// `protoModel` is optional
-				if (!protoModel && typeof socketToOmit === 'string') {
-					protoModel = socketToOmit;
-					socketToOmit = null;
-				}
-
-				// `protoModel` is optional
-				if (!protoModel && typeof data === 'string') {
-					protoModel = data;
-					data = {};
-				}
-
-				// `protoModel` is optional
-				if (!protoModel && typeof data === 'string') {
-					protoModel = data;
-					data = {};
-				}
-
-				// If the 'eventName' is an object, assume the argument was omitted and
-				// parse it as data instead.
-				if (typeof eventName === 'object') {
-					data = eventName;
-					eventName = null;
-				}
-
-				if (!protoModel || !protoModels[protoModel])
-					_broadcast.apply(this, arguments);
-
-				fields = builder.lookup(packagePath + protoModel).getChildren(ProtoBuf.Reflect.Message.Field).map(
-								function (f) {
-									return   f.name;
-								});
-
-				encodedData = {
-					psn: "Message",
-					protobuf: protoModels[protoModel].encode(_.pick(data.data || data, fields)).toBuffer()
-				};
-
-				if (data.data) {
-					delete data.data;
-					data.data = encodedData;
-				} else {
-					data = encodedData;
-				}
-
-				_broadcast.apply(this, arguments);
-			};
 		}
 	};
 };
