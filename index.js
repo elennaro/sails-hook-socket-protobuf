@@ -1,4 +1,3 @@
-
 /**
  * 
  * Sails hook socket protobuf
@@ -34,6 +33,8 @@ module.exports = function (app) {
 			// before trying to attach our hook.
 			app.after('hook:sockets:loaded', function () {
 				//Ovverride socket IO methods to support protobuf encoding
+				require('./lib/overrideSocketIoMethods')(app, builder, protoModels);
+				//Ovverride sails-hook-socket-io methods to support protobuf encoding
 				require('./lib/overrideSocketMethods')(app, builder, protoModels);
 			});
 
