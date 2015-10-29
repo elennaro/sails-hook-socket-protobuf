@@ -1,7 +1,6 @@
 /* global JSON, __dirname */
 
 var path = require('path'),
-				fs = require('fs'),
 				ProtoBuf = require("protobufjs"),
 				builder = ProtoBuf.newBuilder(),
 				protoModels = {};
@@ -16,8 +15,9 @@ module.exports = function (app) {
 			protobuf: require('./lib/defaults'),
 		},
 		initialize: function (done) {
-
 			var self = this;
+
+			app.log.verbose("Initialize sails-hook-socket-protobuf");
 
 			//Init settings
 			folder = 'assets/' + app.config.protobuf.folder;
@@ -32,7 +32,7 @@ module.exports = function (app) {
 
 			if (app.hooks.grunt) {
 				//Add extention script to frontend
-				self.addFrontendLibrary();
+				require('./lib/injectFrontendFile')(app);
 			}
 
 			// If http sockets is enabled, wait until the http hook is loaded
@@ -179,12 +179,6 @@ module.exports = function (app) {
 
 				_broadcast.apply(this, arguments);
 			};
-		},
-		addFrontendLibrary: function () {
-			var text = fs.readFileSync(path.join(__dirname, "js", "sails.io.proto.js")),
-							compiled = _.template(text),
-							result = compiled({config: JSON.stringify(app.config.protobuf)});
-			fs.writeFileSync(path.join(app.config.appPath, "assets/js/dependencies", "sails.io.proto.js"), result);
 		},
 		augmentModels: function () {
 			//Load Model's file
