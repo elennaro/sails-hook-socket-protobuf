@@ -20,7 +20,6 @@ module.exports = function (app) {
 			app.log.verbose("Initialize sails-hook-socket-protobuf");
 
 			//Init settings
-			folder = 'assets/' + app.config.protobuf.folder;
 			fileName = app.config.protobuf.fileName;
 			package = app.config.protobuf.package;
 			isJson = app.config.protobuf.isJson;
@@ -30,23 +29,26 @@ module.exports = function (app) {
 				return done(new Error('Cannot use sails-hook-protobuf `sockets` hook without the `sockets` hook.'));
 			}
 
+			//load models
+			protoModels = require('./lib/loadProtoModels')(app, ProtoBuf, builder);
+
 			if (app.hooks.grunt) {
 				//Add extention script to frontend
 				require('./lib/injectFrontendFile')(app);
 			}
 
-			// If http sockets is enabled, wait until the http hook is loaded
-			// before trying to attach the socket.io server to our underlying
-			// HTTP server.
+			// If sockets is enabled, wait until the sockets hook is loaded
+			// before trying to attach our hook.
 			app.after('hook:sockets:loaded', function () {
 				//Ovverride socket IO methods to support protobuf encoding
 				self.overrideSocketIoMethods();
 			});
 
-			// Wait for `hook:orm:loaded`
+			// Wait for orm to be loaded
 			app.on('hook:orm:loaded', function () {
 				// Augment/override models to do a Pub/Sub encoding
-				self.augmentModels();
+				require('./lib/augmentModels')(app, protoModels);
+
 				// Indicate that the hook is fully loaded
 				return done();
 			});
@@ -116,7 +118,6 @@ module.exports = function (app) {
 				_emit.apply(this, arguments);
 			};
 
-
 			/**
 			 * Broadcast a message to a room
 			 *
@@ -179,24 +180,6 @@ module.exports = function (app) {
 
 				_broadcast.apply(this, arguments);
 			};
-		},
-		augmentModels: function () {
-			//Load Model's file
-			if (isJson)
-				ProtoBuf.loadJsonFile(path.join(app.config.appPath, folder, fileName), builder);
-			else
-				ProtoBuf.loadProtoFile(path.join(app.config.appPath, folder, fileName), builder);
-			protoModels = builder.build();
-			//Load all protobuf models
-
-			for (var identity in app.models) {
-				var protobufSchemeName = app.models[identity].protobufSchemeName;
-				if (!protobufSchemeName || !protoModels[protobufSchemeName])
-					continue;
-				app.models[identity].broadcast = function (roomName, eventName, data, socketToOmit) {
-					app.sockets.broadcast(roomName, eventName, data, socketToOmit, protobufSchemeName);
-				};
-			}
 		}
 	};
 };
