@@ -316,6 +316,7 @@
 		if (proto && model) {
 			deepExtend(data, protoModels[model].decode(proto));
 			delete data.protobuf;
+			delete data.psn;
 		}
 		_onevent.call(this, packet);
 	};
