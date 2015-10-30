@@ -15,7 +15,7 @@ module.exports = function (app) {
 		},
 		//Initialize
 		initialize: function (done) {
-			app.log.verbose("Initialize sails-hook-socket-protobuf");
+			app.log.verbose("socket_protobuf: Initialize sails-hook-socket-protobuf");
 
 			if (!app.hooks.sockets) {
 				return done(new Error('Cannot use sails-hook-protobuf `sockets` hook without the `sockets` hook.'));

@@ -303,6 +303,7 @@
 				psn: "Message",
 				protobuf: protoModels[model].encode(fieldsToEncode).toArrayBuffer()
 			};
+			arguments[1].data = data;
 		}
 		_emit.apply(_socket, arguments);
 	};
