@@ -303,6 +303,7 @@
 				psn: "Message",
 				protobuf: protoModels[model].encode(fieldsToEncode).toArrayBuffer()
 			};
+			arguments[1].data = data;
 		}
 		_emit.apply(_socket, arguments);
 	};
@@ -316,6 +317,7 @@
 		if (proto && model) {
 			deepExtend(data, protoModels[model].decode(proto));
 			delete data.protobuf;
+			delete data.psn;
 		}
 		_onevent.call(this, packet);
 	};
