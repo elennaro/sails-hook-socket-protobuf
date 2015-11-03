@@ -1,5 +1,7 @@
 # sails-hook-socket-protobuf
 
+[![Build Status](https://travis-ci.org/elennaro/sails-hook-socket-protobuf.svg?branch=travis)](https://travis-ci.org/elennaro/sails-hook-socket-protobuf)
+
 A [Sails.js](http://sailsjs.org) hook to support [Protocol Buffers](https://developers.google.com/protocol-buffers/) serializing for [Socket.io](http://socket.io/) message exchange.
 
 Supports serialization for both:
